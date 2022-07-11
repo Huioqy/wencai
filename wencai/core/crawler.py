@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+from asyncio.windows_events import NULL
 import logging
 import re
 import pandas as pd
@@ -99,23 +100,27 @@ class Wencai(object):
 
         r = self.session.post_result(url=WENCAI_CRAWLER_URL['search'],
                                      data=payload, force_cookies=True)
-        result = r.json()['data']['answer'][0]['txt'][0]['content']['components'][0]['data']['datas']
+        data = None
+                    
+        if r is not None: 
 
-        def _re_str(x: str):
-            _re = re.findall('(.*):前复权', x)
-            if len(_re) >= 1:
-                x = _re[-1]
-            check_date = re.search(r"(\d{4}\d{1,2}\d{1,2})",x)
-            if check_date is not None:
-                return x.replace('[{}]'.format(check_date.group()), '')
-            else:
-                return x
+            result = r.json()['data']['answer'][0]['txt'][0]['content']['components'][0]['data']['datas']
+            
+            def _re_str(x: str):
+                _re = re.findall('(.*):前复权', x)
+                if len(_re) >= 1:
+                    x = _re[-1]
+                check_date = re.search(r"(\d{4}\d{1,2}\d{1,2})",x)
+                if check_date is not None:
+                    return x.replace('[{}]'.format(check_date.group()), '')
+                else:
+                    return x
 
-        data = pd.DataFrame().from_dict(result)
-        if not data.empty:
-            columns = {i: _re_str(i) for i in data.columns}
-            data = data.rename(columns=columns)
-            for col in ['market_code', 'code', '关键词资讯', '涨跌幅']:
-                if col in data.columns:
-                    del data[col]
+            data = pd.DataFrame().from_dict(result)
+            if not data.empty:
+                columns = {i: _re_str(i) for i in data.columns}
+                data = data.rename(columns=columns)
+                for col in ['market_code', 'code', '关键词资讯', '涨跌幅']:
+                    if col in data.columns:
+                        del data[col]
         return data
