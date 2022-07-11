@@ -220,5 +220,3 @@ print(r)
 此工具包不得用于任何商业目的，仅可用于爱好量化交易者分享学习和技术讨论。
 
 Welcome to Star and Follow~
-
-# wencai
