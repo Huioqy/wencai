@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-from asyncio.windows_events import NULL
+# from asyncio.windows_events import NULL
 import logging
 import re
 import pandas as pd
@@ -103,7 +103,7 @@ class Wencai(object):
         data = None
                     
         if r is not None: 
-
+            
             result = r.json()['data']['answer'][0]['txt'][0]['content']['components'][0]['data']['datas']
             
             def _re_str(x: str):
